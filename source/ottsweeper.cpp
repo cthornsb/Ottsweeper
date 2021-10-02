@@ -152,10 +152,10 @@ bool Ottsweeper::onUserLoop() {
 	nCurrentCell = nCurrentCellY * nSizeX + nCurrentCellX;
 	bLeftClickHeld = false;
 	if (nCurrentCellX >= 0 && nCurrentCellY >= 0) {
-		if (mouse.check(0)) { // Left mouse button held
+		if (mouse.check(0)) { // LMB pressed
 			bLeftClickHeld = true;
 		}
-		else if (mouse.released(0)) { // Left click
+		else if (mouse.released(0)) { // LMB released
 			if (playfield[nCurrentCell] == 0) { // Uncovered cell
 				if (minefield[nCurrentCell] > 0 && mouse.check(1)) { // Mouse is hovering over a numbered cell and right mouse button is being held 
 					// If the mouse is currently over an uncovered and numbered cell, left clicking will uncover
@@ -180,14 +180,14 @@ bool Ottsweeper::onUserLoop() {
 				uncoverCell(nCurrentCell);
 			}
 		}
-		if (mouse.check(1)) { // Right mouse button held
+		if (mouse.check(1)) { // RMB held
 			if (playfield[nCurrentCell] == 0) { // Cell is uncovered
 				// If the mouse is currently over an uncovered cell, all surrounding uncovered cells will appear
 				// uncovered and blank (but will remain covered).
 				getNeighbors(neighbors, nCurrentCellX, nCurrentCellY);
 			}
 		}
-		else if (mouse.released(1)) { // Right mouse button released
+		else if (mouse.released(1)) { // RMB released
 			switch (playfield[nCurrentCell]) {
 			case 1: // Flag cell
 				playfield[nCurrentCell] = 2;
@@ -202,6 +202,16 @@ bool Ottsweeper::onUserLoop() {
 				break;
 			}
 		}
+	}
+	else if (mouse.poll(0)) { // Check for LMB clicked on smiley face
+		const int smileX[2] = { nNativeWidth / 2.f - 12, nNativeWidth / 2.f + 12 };
+		const int smileY[2] = { 15, 39 };
+		const int mx = (int)mouse.getX();
+		const int my = (int)mouse.getY();
+		if (mx >= smileX[0] && mx <= smileX[1] && my >= smileY[0] && my <= smileY[1]) {
+			resetField();
+		}
+		mouse.reset();
 	}
 	
 	// Draw background
